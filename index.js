@@ -103,7 +103,7 @@ function findImages(text) {
 // ============================
 async function askClaude(userMessage) {
   const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+          model: 'claude-sonnet-4-5',
     max_tokens: 1000,
     system: `你是 Kimi區智取店的門市助理機器人，專門協助門市夥伴解答工作上的問題。
 
