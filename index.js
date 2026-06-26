@@ -59,22 +59,27 @@ ${SOP_KNOWLEDGE}
 }
 
 async function handleEvent(event) {
+  console.log('[事件類型]', event.type, '| 來源:', event.source?.type);
+
+  // 只處理文字訊息
   if (event.type !== 'message' || event.message.type !== 'text') return null;
 
-  const isGroup = event.source.type === 'group' || event.source.type === 'room';
-  const rawText = event.message.text;
+  const sourceType = event.source.type; // 'user', 'group', 'room'
+  const rawText = event.message.text || '';
 
-  // 群組中：只有被 @ 才回應
-  if (isGroup) {
-    const mentioned = event.message.mention?.mentionees?.some(m => m.type === 'user' && m.isSelf);
-    if (!mentioned) return null;
+  console.log('[文字]', rawText, '| 來源類型:', sourceType);
+
+  // 群組/聊天室：包含 @ 才回應
+  if (sourceType === 'group' || sourceType === 'room') {
+    if (!rawText.includes('@')) return null;
   }
 
-  // 移除 @機器人 的部分，只保留問題內容
-  const userMessage = rawText.replace(/@[^s]*/g, '').trim();
+  // 移除 @ 標記，取得實際問題
+  const userMessage = rawText.replace(/@\S*/g, '').trim();
   if (!userMessage) return null;
 
   console.log('[收到]', userMessage);
+
   try {
     const answer = await askClaude(userMessage);
     const images = findImages(userMessage + ' ' + answer);
@@ -101,4 +106,4 @@ app.post('/webhook', express.json(), async (req, res) => {
 app.get('/', (req, res) => res.send('LINE Bot 運行中 ✅'));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`啟動 port ${PORT}`));
+app.listen(PORT, () => console.log(`啟動連接埠${PORT}`));
