@@ -59,19 +59,21 @@ ${SOP_KNOWLEDGE}
 }
 
 async function handleEvent(event) {
-  console.log('[事件類型]', event.type, '| 來源:', event.source?.type);
-
-  // 只處理文字訊息
   if (event.type !== 'message' || event.message.type !== 'text') return null;
 
   const sourceType = event.source.type; // 'user', 'group', 'room'
   const rawText = event.message.text || '';
 
-  console.log('[文字]', rawText, '| 來源類型:', sourceType);
+  console.log('[事件]', sourceType, rawText.substring(0, 50));
 
-  // 群組/聊天室：包含 @ 才回應
+  // 群組/聊天室：必須透過 LINE 的 mention 功能 @ 到機器人才回應
   if (sourceType === 'group' || sourceType === 'room') {
-    if (!rawText.includes('@')) return null;
+    const mentionees = event.message.mention?.mentionees || [];
+    const botMentioned = mentionees.some(m => m.isSelf === true);
+    if (!botMentioned) {
+      console.log('[略過] 群組訊息未標記機器人');
+      return null;
+    }
   }
 
   // 移除 @ 標記，取得實際問題
