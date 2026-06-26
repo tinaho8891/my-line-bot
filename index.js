@@ -14,7 +14,9 @@ const lineConfig = {
 const lineClient = new line.Client(lineConfig);
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+
 const SOP_KNOWLEDGE = fs.readFileSync(path.join(__dirname, 'knowledge.md'), 'utf-8');
+
 
 const IMAGE_MAP = {
   '立保.*卡紙|卡紙.*立保': 'https://drive.google.com/uc?id=15X8UefD8Byno1fFoX8Icwc19-b9DQGWK',
@@ -30,6 +32,7 @@ const IMAGE_MAP = {
   '重新分配.*步驟': 'https://drive.google.com/uc?id=1veJ3dqNuY2YKdus27WM5U8qw4WYLhEXj',
 };
 
+
 function findImages(text) {
   const images = [];
   for (const [pattern, url] of Object.entries(IMAGE_MAP)) {
@@ -41,14 +44,17 @@ function findImages(text) {
   return images;
 }
 
+
 async function askClaude(userMessage) {
   const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-6',
     max_tokens: 800,
     system: `你是 Kimi區智取店的門市助理機器人。
 
+
 知識庫：
 ${SOP_KNOWLEDGE}
+
 
 規則：
 1. 只根據知識庫回答，使用繁體中文
@@ -59,6 +65,7 @@ ${SOP_KNOWLEDGE}
   });
   return response.content[0].text;
 }
+
 
 async function handleEvent(event) {
   if (event.type !== 'message' || event.message.type !== 'text') return null;
@@ -80,6 +87,7 @@ async function handleEvent(event) {
   }
 }
 
+
 // 用 express.json() + 手動驗證，比 middleware 更穩定
 app.post('/webhook', express.json(), async (req, res) => {
   console.log('[Webhook 收到]', JSON.stringify(req.body).substring(0, 200));
@@ -88,7 +96,3 @@ app.post('/webhook', express.json(), async (req, res) => {
   await Promise.all(events.map(handleEvent));
 });
 
-app.get('/', (req, res) => res.send('LINE Bot 運行中 ✅'));
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`啟動 port ${PORT}`));
