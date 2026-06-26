@@ -62,21 +62,16 @@ async function handleEvent(event) {
   if (event.type !== 'message' || event.message.type !== 'text') return null;
 
   const isGroup = event.source.type === 'group' || event.source.type === 'room';
-  const mentionees = event.message.mention?.mentionees || [];
-  const botId = (await lineClient.getProfile(event.source.userId).catch(() => null))?.userId;
+  const rawText = event.message.text;
 
-  // 群組中：只有被 @ 標記才回應
+  // 群組中：只有被 @ 才回應
   if (isGroup) {
-    const isMentioned = mentionees.some(m => m.isSelf);
-    if (!isMentioned) return null;
+    const mentioned = event.message.mention?.mentionees?.some(m => m.type === 'user' && m.isSelf);
+    if (!mentioned) return null;
   }
 
-  // 移除 @機器人 的標記文字，只保留問題內容
-  let userMessage = event.message.text.trim();
-  if (isGroup) {
-    userMessage = userMessage.replace(/@[^\s]+/g, '').trim();
-  }
-
+  // 移除 @機器人 的部分，只保留問題內容
+  const userMessage = rawText.replace(/@[^s]*/g, '').trim();
   if (!userMessage) return null;
 
   console.log('[收到]', userMessage);
