@@ -138,3 +138,481 @@
 ---
 
 ## 八、離店前回報項目（文字格式）
+
+```
+1) 前班未上箱：___（填上一班的(4)）
+2) 上班箱數：___（上班前清點所有一般包裹）
+3) 進貨箱數：___（(2)-(1)=(3)）
+4) 未上箱數：___（下班前清點剩下箱數）
+5) 離店箱數：___（上班打包的離店總箱數）
+6) NDD箱數：___（上班前清點NDD進店箱數）
+7) NDD離店箱數：___ 未收 + ___（請註明「未收」）
+8) FBS箱數：___（賣家已貼好南北面單）
+9) WH箱數：___
+10) WH管制品箱數：___（有綁束帶的）
+11) WH空箱數：___
+12) 空箱數：___
+13) 宅配上架箱數：___（晚班上架箱數）
+```
+
+### 晚班上架前需額外回報
+```
+NDD：___
+WH：___
+管制品：___
+標準：___
+```
+並拍照 WH 箱數一起回報。
+
+---
+
+## 九、每日到店回報範本
+
+### 需拍照回報群組的項目
+
+| 項目 | 說明 |
+|------|------|
+| TO單打卡 | 到店後拍照 |
+| 制服照 + NDD橘櫃平板 | 每日回報 |
+| 繳費機（收據紙水位 + 測試列印） | 每日回報 |
+| 自助寄件機（紙捲水位 + 測試列印） | 每日回報 |
+| 遺落包裹 | 貨態照 + 包裹照（上架完成不需拍照） |
+| 各異常包裹 | 回報群組 |
+| 無材積/錯店/同取件門市包裹 | 回報群組 |
+| 繳費機異常 | 回報格式見下方 |
+| HD 上架待上架擺放區、上架完成 | 拍照回報 |
+| NDD 畫面及擺放位置 | 離開前回報 |
+| AppSheet 收補空箱完成畫面 | 右上角一定要更新！ |
+
+### 繳費機異常回報格式
+```
+> 異常回報
+店名：新莊OO - 智取店
+設備：繳費機
+異常描述：（說明狀況）
+```
+
+---
+
+## 十、異常包裹處理 SOP
+
+### 送錯門市
+- 整箱都錯店：保留該店 TO 單，下方貼上 TO 單「**整箱錯店**」
+- 各箱單顆錯店：累積成一箱，貼上 TO 單「**單顆錯店**」
+- 回報格式：`錯店 __ 件`
+
+### 濕/破損包裹
+- 直接回報 AppSheet
+- 需拍：面單照 + 濕/破損位置照
+
+### 重複件、取消件、遺失件
+1. 無法驗收的包裹，至 `spx.tw` 查貨態
+2. 取消件 / 遺失件 → 裝箱退 SOC，貼「異常包裹」TO 單
+
+### 遺落包裹處理
+- 使用「**遺落包裹重新上架**」模組重新上架
+- 記得在智能上架**前**，先做遺落上架
+- 回報：只要貨態照及包裹照即可，上架完成不必拍照
+
+---
+
+## 十一、智取櫃天靈蓋開啟方式
+
+### 一般智取櫃
+1. 用**十字型粗鑰匙**插入轉開
+2. 打開板子（左/右各一個拉柄）
+3. 拉柄往**上**拉
+
+### 皇丞櫃
+1. 用黑色鑰匙打開板子
+2. 中間拉柄往**上**拉
+
+---
+
+## 十二、設備簡易排除
+
+### 設備型號認識
+| 用途 | 型號 |
+|------|------|
+| 寄件收據 | RP-700 (U) |
+| 寄件單（標籤機） | Sbarco T4ES 203 dpi（複件 1） |
+| 報到單 | THERMAL 203DPI #1 |
+| 工作臺 | ZDesigner ZD230-203 dpi ZPL |
+| 藍芽標籤機 | DA210 / DA220 |
+
+### 標籤機/收據機無法列印
+
+#### 基本排除
+1. 檢查後方的線，是否有插好
+2. 確認是否有開機（電源燈恆亮）
+3. 檢查是否卡紙
+4. 檢查紙捲擺放是否正確
+5. 電腦、平板是否已重開機
+
+#### 進階排除
+1. 確認左下角 Windows，關機圖示是否有**小橘點**
+   - 有 → 重開機並更新，再重新測試列印
+2. 點選 Windows > 設定 > 裝置 > 印表機與掃描器 → 找對應機型 > 管理 > 列印測試頁
+3. 確認門市系統 (point) 右上角印表機設定是否正確
+
+### 標籤機面單模糊/只印出一半
+- 解決方法：用**酒精擦拭滾輪**、清潔殘膠
+
+### 掃描槍 BL6350 排除
+1. 線拔掉重插，掃描圖上的 QR code
+2. 放回掃碼座，等**藍燈亮**後即可使用
+3. 若仍無法：插上掃描槍長按 30 秒 → 聽嗶嗶聲後放開 → 再按一次掃描鍵 → 等藍燈變慢閃時再按一次 → 直到藍燈恆亮，連線成功
+
+### 掃描槍 MS852P（最新型）
+1. 拿起前長按，等待連線
+2. **亮藍燈**代表已連線完成
+3. 若需重置：迴紋針戳重置孔 → 長按 2 秒亮綠燈 → 等自動配對（閃綠光）→ 燈號變藍色即可正常使用
+
+### 藍芽標籤機無法列印 TO 單
+1. PDA 設定重新連線
+2. 上架系統重新連線（印表機：DA210/DA220，類型：SPTO、寄件裝箱單）
+3. 標籤機重開機、線重插
+4. 若亮**紅燈**，按出紙鍵重新印出（黃色為正常亮燈）
+
+### 藍芽標籤機出現【參數錯誤】
+- 確認印表機設定：DA210 / DA220，類型：SPTO、寄件裝箱單
+
+### 藍芽標籤機出現【Time Out】
+- 門市系統連線逾時 → 上架系統滑掉重開即可
+- 確認標籤機是否有正常裝紙
+
+### NDD 平板（橘櫃）
+- 電源鍵 + 音量鍵**同時按壓**，強制關機後再開機
+
+### 寄件櫃 Mini PC 主機
+1. 小鍵盤：Alt+F4 縮小螢幕
+2. 桌面網頁連結 point → 測試列印
+3. 測試完，按自助寄件區
+4. 切回全螢幕
+（主機在寄件櫃那邊，開關機鍵在機器下面）
+
+---
+
+## 十三、FBS 處理流程
+
+### FBS 說明
+- FBS 皆使用**專用紙箱**，賣家會自行張貼好裝箱南北單（TO 單）
+- **夥伴請不要往紙箱上貼貼紙**
+
+### 處理步驟
+1. PDA 進入 AppSheet → 點「**FBS每日寄件箱回報**」
+2. 檢查門市所有區域，找出所有 FBS 環保無包裝包裹
+3. 將 FBS 包裹疊放在 WH 離店擺放區，**南北分落**，擺上 FBS 南北標示文宣
+4. AppSheet 上傳照片及南北數量
+5. **拍照回報群組，請於 21:00 前完成**
+
+---
+
+## 十四、SCS / FBS 異常包裹處理 SOP
+
+> 上線時間：6/2 起｜智取店適用
+
+---
+
+### ★ 最新異常件政策（6/2 起）
+- 背景：系統支援加速退貨流程，SCS FBS 異常件**無需等待各自 RTS**，可直接送回 WH
+- **重點：有基座貼基座（上下各貼一張，不重疊）**
+
+---
+
+### 🔴 異常件類型說明
+
+異常狀況包含：
+- 商品有多張寄件單
+- 商品破損／濕損
+- 多樣商品貼同一單號的寄件單
+- 其他顧客反饋狀況
+
+---
+
+### 📦 裝箱原則
+
+1. **若有 RTS 和異常件，可合併一箱回去**
+   - 不需要使用異常 TO 袋
+   - 分別貼 RTS 與異常的 TO（上下各貼，不重疊）
+
+2. **若當天只有 RTS 或只有異常件**
+   - 不需等待，直接貼對應 TO 單送回 WH
+
+3. **若是破損漏液**
+   - 自己一箱回去 WH（避免汙染沒瑕疵的商品）
+
+4. ⚠️ **小提醒：SCS 和 FBS 仍是不能裝在同一箱**
+   - SCS 異常跟 RTS 一箱
+   - FBS 異常跟 RTS 一箱
+
+---
+
+### 🛒 蝦皮直營／無包裝隔日到 異常包裹說明
+
+- 蝦皮直營／無包裝隔日到包裹有寄件單 → 需先回報 AppSheet，再離店裝箱
+- 若**沒有寄件單**，請直接以異常包裹執行離店裝箱
+- 顧客不願領取的蝦皮直營／無包裝隔日到包裹 → **不可視為異常包裹**，請拿回原櫃位，待逾期後再依照逾期未取包裹離店裝箱流程退回
+- 若為破損漏液，請**獨立裝一箱送回理貨中心**
+
+---
+
+### 📋 異常包裹離店裝箱 步驟
+
+**步驟 1｜將異常包裹放入當天需離店的逾期未取包裹物流箱**
+- [蝦皮直營] 異常包裹放入 [蝦皮直營] 逆物流箱
+- [無包裝隔日到] 異常包裹放入 [無包裝隔日到] 逆物流箱
+
+**步驟 2｜若現場尚無 RTS 逆物流箱**
+- 直接將異常包裹放入黑色物流箱
+- ⚠️ [蝦皮直營] 異常包裹 與 [無包裝隔日到] 異常包裹 **需分開裝箱**
+
+**步驟 3｜物流系統點【標準配送 & 其他離店裝箱】→ 點【列印物流箱單】**
+
+**步驟 4｜TO Pack 點選類型**
+- SCS 蝦皮特選 → 選【SCS 蝦皮特選-異常包裹袋】
+- FBS 環保無包裝 → 選【FBS 環保無包裝-異常包裹袋】
+- 輸入裝袋數量 → 點【列印物流箱單】
+
+**步驟 5｜將物流箱單（TO 單）貼在逆物流的物流箱單下方**
+- 若現場尚無 RTS 逆物流箱 → 流箱單（TO 單）貼在物流箱**左上角**
+
+---
+
+### ❓ 常見 Q&A
+
+**Q. 若異常裸裝商品較大，裝不進去夾鏈袋，怎麼辦？**
+A. 請使用**專用藍色厚垃圾袋**裝袋
+
+---
+
+## 十五、SCS HD（蝦皮特選店到家宅配）
+
+> 適用門市：福壽/富港/昌盛/昌隆/中隆/中信
+
+### 時間口訣
+- **晚班**：21:00 前包裝完成，11:00 後開始上架
+- **早班**：10:00 前包裝完成，11:00 後開始上架
+
+### 步驟
+1. SCS HD 隨黑箱送至門市，**拍黑箱並回報 WH 進店箱數**（無新進也要回報）
+2. 將黑箱上架到櫃位內
+3. PDA 點選「**宅配包裹**」→「**取得最新的打包任務**」（空白不等於不用包裝）
+4. 點選「新增至打包清單並列印」→ 標籤機自動印 TO 單
+5. 將 TO 單貼在專用破壞袋正面，一個袋子貼一張
+6. 將張貼好的破壞袋放在空箱內，跟小烏龜車推到前場
+7. PDA 點「宅配包裹包裝」→「開始打包」
+8. 掃描宅配包裝 TO 編號欄位 → 刷包裝袋上 TO 單條碼
+9. 系統出現需裝袋的商品清單
+10. 移動到指定儲位 → 點「開啟櫃位」→ 取出商品 → 刷商品條碼 → 放入破壞袋
+11. 重複直到全部任務完成 → **拍照回報群組**
+
+---
+
+## 十六、包裹重新分配 SOP
+
+### 操作步驟
+1. PDA 點選「**包裹重新分配**」
+2. 走到指定舊櫃位，按「開啟櫃位」
+3. 取出包裹，PDA 刷包裹條碼，出現綠勾 ✅，關閉舊櫃門
+4. 移動到新指定櫃位，按「開啟櫃門」
+5. **先刷包裹條碼**，再刷新櫃位 QR Code，出現綠勾 ✅
+6. 包裹放入後，**務必按「完成」**，關閉新櫃門
+7. 重複直到完成全部任務，歸 0 後 PDA 畫面拍照
+
+### 口訣
+**「開」「刷」「開」「刷」「刷」「關」**
+
+### 異常情況處理
+
+| 情況 | 處理方式 |
+|------|---------|
+| 包裹無法放入新櫃 | 刷包裹 → 按「無法放入」→「重新上架包裹」→ 刷包裹 → 刷儲位 → 開原櫃放回 → 關門 |
+| 沒有找到包裹/無法上架 | 異常回報並說明原因 |
+| 異常後又找到包裹 | 直接刷包裹條碼即可 |
+
+---
+
+## 十七、離開前注意事項
+
+1. 確認**層板一定要收好**（不可留在外面）
+2. PDA 插上電源充電
+3. 鑰匙回原位
+4. TO 單打卡
+5. 關閉後場電燈，確實將門**上鎖**
+6. 寄件櫃在倉庫的智取店：離開時放上物流箱（隔檔區隔隔日包裹）
+7. 寄件櫃是獨立櫃的智取店：離開前在寄件櫃旁放一落空箱
+
+---
+
+## 十八、AppSheet 收補空箱回報
+
+1. 開啟 AppSheet，填寫收補空箱數量
+2. 拍攝已回報畫面
+3. **右上角一定要更新！！**
+
+---
+
+## 附錄：無材積（裸箱）處理
+- 上滿後若有裸箱無法上架，整理成一落
+- 貼上「**上架排序 0**」，讓下一班夥伴**優先上架**
+
+## 附錄：先進先出提醒
+- 上架完成後，注意「離店」先進先出排序，舊包裹優先離店
+
+---
+
+*本文件由教育訓練手冊自動整理，如有更新請以最新版本為準。*
+
+---
+
+## 十六、新莊各門市帳號資訊
+
+> ⚠️ 本資料僅限內部使用，請勿對外分享
+
+| # | 店名 | PDA帳號 | PDA密碼 | 自助寄件帳號 | 自助寄件密碼 | NDD帳號 | NDD密碼 |
+|---|------|---------|---------|------------|------------|---------|---------|
+| 1 | 新莊思源 | UserID5968 | HiBarbie167@ | UserID9384 | HiBarbie167@ | - | - |
+| 2 | 新莊復興 | UserID5987 | HiBarbie167@ | UserID9403 | HiBarbie167@ | - | - |
+| 3 | 新莊昌隆 | UserID6007 | HiBarbie167@ | UserID9423 | HiBarbie167@ | - | - |
+| 4 | 新莊復興二 | UserID6107 | HiBarbie167@ | UserID9523 | HiBarbie167@ | - | - |
+| 5 | 新莊公園 | UserID6121 | HiBarbie167@ | UserID9537 | HiBarbie167@ | - | - |
+| 6 | 新莊榮華 | UserID6132 | HiBarbie167@ | UserID9548 | HiBarbie167@ | UserID11256 | HiBarbie167@ |
+| 7 | 新莊中誠 | UserID6193 | Tinaho789@ | UserID9609 | Tinaho789@ | - | - |
+| 8 | 新莊中港 | UserID6240 | HiBarbie167@ | UserID9656 | HiBarbie167@ | UserID11364 | HiBarbie167@ |
+| 9 | 新莊中信 | UserID6437 | HiBarbie167@ | UserID9853 | HiBarbie167@ | - | - |
+| 10 | 新莊福德 | UserID6511 | HiBarbie167@ | UserID9927 | HiBarbie167@ | UserID11635 | HiBarbie167@ |
+| 11 | 新莊中原 | UserID6661 | HiBarbie167@ | UserID10077 | HiBarbie167@ | UserID11785 | HiBarbie167@ |
+| 12 | 新莊中港二 | UserID6983 | HiBarbie167@ | UserID10399 | HiBarbie167@ | UserID12107 | HiBarbie167@ |
+| 13 | 新莊自立 | UserID7315 | HiBarbie167@ | UserID10731 | HiBarbie167@ | - | - |
+| 14 | 新莊中興 | UserID7361 | HiBarbie167@ | UserID10777 | HiBarbie167@ | - | - |
+| 15 | 新莊立志 | UserID7419 | Shop7419! | UserID10835 | Shop10835! | - | - |
+| 16 | 新莊昌盛 | UserID16872 | HiBarbie167@ | UserID16941 | HiBarbie167@ | - | - |
+| 17 | 新莊昌平 | UserID17093 | HiBarbie167@ | UserID17156 | HiBarbie167@ | - | - |
+| 18 | 新莊幸福 | UserID17111 | HiBarbie167@ | UserID17174 | HiBarbie167@ | - | - |
+| 19 | 新莊化成 | UserID17123 | HiBarbie167@ | UserID17186 | HiBarbie167@ | - | - |
+| 20 | 新莊中安 | UserID17301 | HiBarbie167@ | UserID17336 | HiBarbie167@ | - | - |
+| 21 | 新莊立信 | UserID17324 | HiBarbie167@ | UserID17359 | HiBarbie167@ | - | - |
+| 22 | 新莊五權 | UserID18394 | CoolBarbie54# | UserID18445 | HiBarbie167@ | - | - |
+| 23 | 新莊文衡 | UserID18542 | CoolBarbie54# | UserID18568 | HiBarbie167@ | - | - |
+| 24 | 新莊福壽 | UserID18558 | CoolBarbie54# | UserID18584 | CoolBarbie54# | - | - |
+| 25 | 新莊頭前 | UserID18704 | CoolBarbie54# | UserID18715 | CoolBarbie54# | - | - |
+| 26 | 新莊田徑 | UserID20314 | Sp1234_20314@ | UserID20363 | Sp1234_20363@ | - | - |
+| 27 | 新莊昌明 | UserID20465 | Sp1234_20465@ | - | - | - | - |
+| 28 | 新莊中隆 | UserID20700 | Sp1234_20700@ | UserID20755 | Sp_20755! | - | - |
+| 29 | 新莊富港 | UserID21049 | Sp1234_21049@ | UserID21108 | Sp1234_21108@ | - | - |
+| 30 | 新莊中和 | UserID21997 | Sp1234_21997@ | - | - | - | - |
+| 31 | 新莊昌華 | UserID21998 | Sp1234_21998@ | - | - | - | - |
+| 32 | 新莊福前 | UserID22176 | Sp1234_22176@ | - | - | - | - |
+| 33 | 新莊博愛 | UserID22137 | Sp1234_22137@ | - | - | - | - |
+
+---
+
+## 十七、圖片對應表
+
+> LINE Bot 回答相關問題時，會自動附上對應圖片連結。所有圖片已設定公開，任何知道連結的人皆可檢視。
+
+### 📋 每日到店
+
+| 步驟 | 圖片連結 |
+|------|---------|
+| NDD橘櫃平板開機鍵 | https://drive.google.com/uc?id=132pLwiPuXhxo4z0IcrpIenzgpktio-58 |
+| 晚班回報管制品畫面 | https://drive.google.com/uc?id=1mYFSww_dh7t6iqSSuecas4occO1rZ4Gi |
+
+### 🖨️ 繳費機
+
+| 步驟 | 圖片連結 |
+|------|---------|
+| 立保繳費機｜卡紙排除 | https://drive.google.com/uc?id=15X8UefD8Byno1fFoX8Icwc19-b9DQGWK |
+| 立保繳費機｜門打不開 | https://drive.google.com/uc?id=1EpHHpm2we2VVbv1E-stYZJku-v5gCni3 |
+| 繳費機｜收據無法列印（電源線重插） | https://drive.google.com/uc?id=118Sz7SrZi6OeQhgIrt2g-mNB5-gzAxn2 |
+
+### 🏗️ 上架流程
+
+| 步驟 | 圖片連結 |
+|------|---------|
+| 上架完成｜PDA畫面＋TO單 | https://drive.google.com/uc?id=1-tOrVUGr6Irk_UQ0UFrMd0ouq9huyo3l |
+| 上架效率｜秒數計算說明 | https://drive.google.com/uc?id=1KNZqEhVsL1M2VRUTYsOQXrU1x995vjfy |
+| 上架SOP｜注意事項 | https://drive.google.com/uc?id=1GuoesZtPOrNrsS0lWEZMPlrs8v6DuRmZ |
+| 裸箱上架排序0｜貼紙示意 | https://drive.google.com/uc?id=1KQKUwquvy7GhJSCXAz3laTzSQILle5PJ |
+| 宅配回報｜待上架擺放位置 | https://drive.google.com/uc?id=1XLc1JRRFS3yRmzMMH2ib3pGQ9iLg2gxy |
+
+### ⚠️ 異常包裹
+
+| 步驟 | 圖片連結 |
+|------|---------|
+| 異常包裹｜回報方式 | https://drive.google.com/uc?id=1OZ42fmIYABx7n_diPvocQ8qAbVWW2fkL |
+| 異常包裹｜查貨態spx.tw | https://drive.google.com/uc?id=1JTJubDgCiPdNetAVHSReFEkNAPP8ENtk |
+
+### 🔧 設備排除
+
+| 步驟 | 圖片連結 |
+|------|---------|
+| 標籤機｜機器識別圖 | https://drive.google.com/uc?id=1yjFLUk_tjjfEScV4xllTB3TWMYtsGbeC |
+| 熱感印表機｜機器識別圖 | https://drive.google.com/uc?id=1VZBHkDhtJMEZKRcHzS0xrecL6Bau0P8V |
+| 標籤機｜面單模糊只印一半 | https://drive.google.com/uc?id=1QKsVDkv78naN41k2jjE7JcBkqxj-3u2P |
+| 標籤機｜簡易排除步驟1 | https://drive.google.com/uc?id=1T7O4iOYcG42xzecfrMpwx15fdllnL_iy |
+| 標籤機｜簡易排除步驟2 | https://drive.google.com/uc?id=1TrQ8TstavX-JBkDCKWkIOM3HeBudoAag |
+| 標籤機｜簡易排除步驟3 | https://drive.google.com/uc?id=1BMexbvlgJtflJUj6WfDNmyjEuV35AmVF |
+| 標籤機｜簡易排除步驟4 | https://drive.google.com/uc?id=1j3tmiGHhTJ_40n_8XPkRvMvnOlYVz3_f |
+| 藍芽標籤機｜故障排除步驟1（PDA重新連線） | https://drive.google.com/uc?id=1eTemRWa1Kv77HNmFqFnQ1wqyTm5b82Zh |
+| 藍芽標籤機｜故障排除步驟2（PDA設定） | https://drive.google.com/uc?id=1W7ykVTSPvtK7Bi_s1PUSQgfy0YxbcTVc |
+| 藍芽標籤機｜故障排除步驟3（上架系統重新連線） | https://drive.google.com/uc?id=1VZT_tTow-LFl2_O9rFtt1I8eKKLUNyxR |
+| 藍芽標籤機｜故障排除步驟4（參數錯誤） | https://drive.google.com/uc?id=1Lk6gUfIU1bWs5-DrV99uqJxZ_89kCiwG |
+| 藍芽標籤機｜無法列印先重開機 | https://drive.google.com/uc?id=1rJpPLwt88yxutlOdi9fsHkYE1QcjJaMT |
+| 藍芽標籤機｜出現Time Out | https://drive.google.com/uc?id=1MT5JZB5mdgXPpccxw6h9IAIjtIDeuO0Y |
+| MS852P掃描槍｜操作說明1 | https://drive.google.com/uc?id=1zQr5giGEp9RAVT-9I8XWI5GSNFCBKFNS |
+| MS852P掃描槍｜操作說明2 | https://drive.google.com/uc?id=1NDM4d9eD_KhSbshHb7d5qpUniFmooRCj |
+| 平板＆Kiosk｜開機鍵位置 | https://drive.google.com/uc?id=1dHSjOE8Ditd9yXHXs48TrjAwl-qgC5sA |
+| Mini PC｜開關鍵位置 | https://drive.google.com/uc?id=1lGz7SgsOv4pjxtWNaJjdNyqDoiWTnESZ |
+| TMT｜關門流程 | https://drive.google.com/uc?id=1bQlIjHKDMNu9XSMOZ88YuI4VTVqqQu4j |
+
+### 🛍️ FBS
+
+| 步驟 | 圖片連結 |
+|------|---------|
+| FBS｜處理流程說明 | https://drive.google.com/uc?id=1FffvrcX3UitTcGKgFXtQRIzeSWXFo73Y |
+| FBS｜打包步驟1 | https://drive.google.com/uc?id=1SZxScUgTDYT72IWoY8rSY47eyu_CivD- |
+| FBS｜打包步驟2 | https://drive.google.com/uc?id=1VQ9NOXRm14nlCkGfGgVbV3DlxBo97Jse |
+| FBS｜打包步驟3 | https://drive.google.com/uc?id=1EiD_WO1Nzr4w4YNbn3Dz6WMKn_Me6mnG |
+
+### 🔴 SCS HD 打包 & 異常
+
+| 步驟 | 圖片連結 |
+|------|---------|
+| SCS HD｜上架步驟1 | https://drive.google.com/uc?id=1pOfx6nxWEzBMst9PuaKl5P0nmC4iTSK7 |
+| SCS HD｜打包步驟2 | https://drive.google.com/uc?id=1oN6jX4nvNOFM19dtd3BDcIyOlmV3QNUf |
+| SCS HD｜打包步驟3 | https://drive.google.com/uc?id=1kpZZndOZTaKIlUCm5CtyDyit2jYWVUcS |
+| SCS HD｜打包步驟4 | https://drive.google.com/uc?id=1YPY8Pg0hm1-i6314QkRlUSzQqNdkA5Ub |
+| SCS HD｜打包步驟5 | https://drive.google.com/uc?id=1oG3NTeCNDj1jyLpAW0ObwlgSRsNO6gZ6 |
+| SCS異常包裹｜退異常步驟1（夾鏈袋處理） | https://drive.google.com/uc?id=1VvuWwWHhA_laUyag-ZTQ2Yz5XMZ2K4q_ |
+| SCS異常包裹｜退異常步驟2（沒有逾期箱） | https://drive.google.com/uc?id=1C6e2y_vHzmsDVCzcjeu1x7jS7JbgPiFG |
+
+### 🔁 包裹重新分配
+
+| 步驟 | 圖片連結 |
+|------|---------|
+| 包裹重新分配｜步驟1-2（PDA操作+開櫃） | https://drive.google.com/uc?id=1veJ3dqNuY2YKdus27WM5U8qw4WYLhEXj |
+| 包裹重新分配｜步驟3-4（刷條碼+移動新櫃） | https://drive.google.com/uc?id=1BwbCA_rnkvL5KVlO6i8qbPnsWyTvOL0i |
+| 包裹重新分配｜步驟5-6（刷QR＋完成） | https://drive.google.com/uc?id=1Rp4LsK1ozutHzAve69Xo3uCZKSDne2q_ |
+| 包裹重新分配｜異常｜無法放入 | https://drive.google.com/uc?id=11R9kMWkgPN2qjPokXkLRVkTMfB4T3joD |
+| 包裹重新分配｜異常｜找不到包裹 | https://drive.google.com/uc?id=1_Wh5c8Qxt7cSK84RTeTtaoOX9HCOcJl_ |
+| 包裹重新分配｜異常後找到包裹 | https://drive.google.com/uc?id=1iBWz_kqsZepRKCRmPd70_mkINM8M74hd |
+| 包裹重新分配｜影片教學 | https://drive.google.com/file/d/1ALtufuScqKBveuWg6HwJP7AyQjp40vas/view |
+
+### 📋 AppSheet 回報
+
+| 步驟 | 圖片連結 |
+|------|---------|
+| AppSheet｜回報收補空箱步驟1 | https://drive.google.com/uc?id=1Oye6KTvsxquIYmY8JcG-AlLCwuG_c6g- |
+| AppSheet｜回報收補空箱完成畫面 | https://drive.google.com/uc?id=1gqJXWamfN69U0fImv1l0PsZz_gOB4yb_ |
+
+
+### PDA 帳號登出／無法登入
+
+1. 前往「後場設備」
+2. 將後場設備上的物流帳號「先登出」
+3. 按「顯示密碼」
+4. 看到帳號密碼後，回到 PDA 輸入登入即可 ✅
+
+若步驟操作後仍無法登入，請聯繫區經理協助處理 🙌
