@@ -312,25 +312,19 @@ WH：___
 
 ---
 
-### ⚠️ SCS 異常處理
+### ⚠️ SCS / FBS 特選商品（皆不需使用夾鏈袋裝）
 
-**重點：有什麼貼什麼（物流箱上下各貼一張，不重疊）**
+**1️⃣ 早班有逾期件**
+→ 請單獨裝放一箱（貼逆物流）
 
-#### 📦 裝箱規則
-- SCS 和 FBS **不能裝同一箱**
-- SCS 異常 + RTS → **合併一箱**送回 WH，分別貼各自 TO 單
-- 當日只有 RTS 或只有異常件 → **不需等待**，直接貼 TO 單送回 WH
-- 破損漏液 → **單獨一箱**送回 WH（避免汙染其他商品）
+**2️⃣ SCS / FBS 當天皆有異常**
+→ 請**分開裝箱**
+→ 黑箱直接貼「SCS 或 FBS 異常包裹袋」
+（不要貼在商品上面）
 
-#### 📋 裝箱步驟
-1. 有寄件單者先回報 AppSheet → 【客訴｜裸裝商品異常回報】→ 選對應類別
-2. 無寄件單直接裝箱
-3. SCS 裝入**透明夾鏈袋**（1袋1張TO單）
-4. TO Pack 選【SCS蝦皮特選-異常包裹袋】→ 印TO單 → 貼夾鏈袋上
-5. 放入當天離店的 **SCS 逆物流箱**
-
-#### 🔴 系統顯示「打叉往SOC」
-寄件單取件欄打叉 → 裝箱 → TO Pack 選【打叉往SOC】→【其他離店TO】→ 刷QR Code & RFID → 放離店區
+**3️⃣ 濕損 / 破損**
+→ 黑箱直接貼「異常包裹」
+→ **單獨一箱**處理
 
 ---
 
@@ -340,13 +334,6 @@ WH：___
 1. 先刷**櫃內原有包裹**
 2. 再刷**待上架的 HD 包裹**
 3. 依照 PDA 畫面顯示操作即可
-
----
-
-### ❓ 常見 Q&A
-
-**Q. 若異常裸裝商品較大，裝不進去夾鏈袋，怎麼辦？**
-A. 請使用**專用藍色厚垃圾袋**裝袋
 
 如有其他問題請聯繫區經理 🙋
 
@@ -432,15 +419,6 @@ A. 請使用**專用藍色厚垃圾袋**裝袋
 
 ---
 
-## 十六、PDA 帳號登出／無法登入
-
-1. 請優先將app滑掉重開
-2. 若還是沒有，可到後場登出平板再登入，即可看到帳號密碼 ✅
-
-若步驟操作後仍無法登入，請聯繫區經理協助處理 🙌
-
----
-
 ## 十七、圖片對應表
 
 > LINE Bot 回答相關問題時，會自動附上對應圖片連結。所有圖片已設定公開，任何知道連結的人皆可檢視。
@@ -509,17 +487,12 @@ A. 請使用**專用藍色厚垃圾袋**裝袋
 | FBS｜打包步驟2 | https://drive.google.com/uc?id=1VQ9NOXRm14nlCkGfGgVbV3DlxBo97Jse |
 | FBS｜打包步驟3 | https://drive.google.com/uc?id=1EiD_WO1Nzr4w4YNbn3Dz6WMKn_Me6mnG |
 
-### 🔴 SCS HD 打包 & 異常
+### PDA 帳號登出／無法登入
 
-| 步驟 | 圖片連結 |
-|------|---------|
-| SCS HD｜上架步驟1 | https://drive.google.com/uc?id=1pOfx6nxWEzBMst9PuaKl5P0nmC4iTSK7 |
-| SCS HD｜打包步驟2 | https://drive.google.com/uc?id=1oN6jX4nvNOFM19dtd3BDcIyOlmV3QNUf |
-| SCS HD｜打包步驟3 | https://drive.google.com/uc?id=1kpZZndOZTaKIlUCm5CtyDyit2jYWVUcS |
-| SCS HD｜打包步驟4 | https://drive.google.com/uc?id=1YPY8Pg0hm1-i6314QkRlUSzQqNdkA5Ub |
-| SCS HD｜打包步驟5 | https://drive.google.com/uc?id=1oG3NTeCNDj1jyLpAW0ObwlgSRsNO6gZ6 |
-| SCS異常包裹｜退異常步驟1（夾鏈袋處理） | https://drive.google.com/uc?id=1VvuWwWHhA_laUyag-ZTQ2Yz5XMZ2K4q_ |
-| SCS異常包裹｜退異常步驟2（沒有逾期箱） | https://drive.google.com/uc?id=1C6e2y_vHzmsDVCzcjeu1x7jS7JbgPiFG |
+1. 請優先將app滑掉重開
+2. 若還是沒有，可到後場登出平板再登入，即可看到帳號密碼 ✅
+
+若步驟操作後仍無法登入，請聯繫區經理協助處理 🙌
 
 ### 🔁 包裹重新分配
 
