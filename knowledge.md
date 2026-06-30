@@ -218,6 +218,9 @@ WH：___
 
 ## 十一、智取櫃天靈蓋開啟方式
 
+### 倉庫門打不開
+試試 TMT 切換藍芽開啟，如果還是不行，請聯繫區經理與店長 謝謝
+
 ### 一般智取櫃
 1. 用**十字型粗鑰匙**插入轉開
 2. 打開板子（左/右各一個拉柄）
@@ -419,6 +422,48 @@ WH：___
 
 ---
 
+## 十六、新莊各門市帳號資訊
+
+> ⚠️ 本資料僅限內部使用，請勿對外分享
+
+| # | 店名 | PDA帳號 | PDA密碼 | 自助寄件帳號 | 自助寄件密碼 | NDD帳號 | NDD密碼 |
+|---|------|---------|---------|------------|------------|---------|---------|
+| 1 | 新莊思源 | UserID5968 | HiBarbie167@ | UserID9384 | HiBarbie167@ | - | - |
+| 2 | 新莊復興 | UserID5987 | HiBarbie167@ | UserID9403 | HiBarbie167@ | - | - |
+| 3 | 新莊昌隆 | UserID6007 | HiBarbie167@ | UserID9423 | HiBarbie167@ | - | - |
+| 4 | 新莊復興二 | UserID6107 | HiBarbie167@ | UserID9523 | HiBarbie167@ | - | - |
+| 5 | 新莊公園 | UserID6121 | HiBarbie167@ | UserID9537 | HiBarbie167@ | - | - |
+| 6 | 新莊榮華 | UserID6132 | HiBarbie167@ | UserID9548 | HiBarbie167@ | UserID11256 | HiBarbie167@ |
+| 7 | 新莊中誠 | UserID6193 | Tinaho789@ | UserID9609 | Tinaho789@ | - | - |
+| 8 | 新莊中港 | UserID6240 | HiBarbie167@ | UserID9656 | HiBarbie167@ | UserID11364 | HiBarbie167@ |
+| 9 | 新莊中信 | UserID6437 | HiBarbie167@ | UserID9853 | HiBarbie167@ | - | - |
+| 10 | 新莊福德 | UserID6511 | HiBarbie167@ | UserID9927 | HiBarbie167@ | UserID11635 | HiBarbie167@ |
+| 11 | 新莊中原 | UserID6661 | HiBarbie167@ | UserID10077 | HiBarbie167@ | UserID11785 | HiBarbie167@ |
+| 12 | 新莊中港二 | UserID6983 | HiBarbie167@ | UserID10399 | HiBarbie167@ | UserID12107 | HiBarbie167@ |
+| 13 | 新莊自立 | UserID7315 | HiBarbie167@ | UserID10731 | HiBarbie167@ | - | - |
+| 14 | 新莊中興 | UserID7361 | HiBarbie167@ | UserID10777 | HiBarbie167@ | - | - |
+| 15 | 新莊立志 | UserID7419 | Shop7419! | UserID10835 | Shop10835! | - | - |
+| 16 | 新莊昌盛 | UserID16872 | HiBarbie167@ | UserID16941 | HiBarbie167@ | - | - |
+| 17 | 新莊昌平 | UserID17093 | HiBarbie167@ | UserID17156 | HiBarbie167@ | - | - |
+| 18 | 新莊幸福 | UserID17111 | HiBarbie167@ | UserID17174 | HiBarbie167@ | - | - |
+| 19 | 新莊化成 | UserID17123 | HiBarbie167@ | UserID17186 | HiBarbie167@ | - | - |
+| 20 | 新莊中安 | UserID17301 | HiBarbie167@ | UserID17336 | HiBarbie167@ | - | - |
+| 21 | 新莊立信 | UserID17324 | HiBarbie167@ | UserID17359 | HiBarbie167@ | - | - |
+| 22 | 新莊五權 | UserID18394 | CoolBarbie54# | UserID18445 | HiBarbie167@ | - | - |
+| 23 | 新莊文衡 | UserID18542 | CoolBarbie54# | UserID18568 | HiBarbie167@ | - | - |
+| 24 | 新莊福壽 | UserID18558 | CoolBarbie54# | UserID18584 | CoolBarbie54# | - | - |
+| 25 | 新莊頭前 | UserID18704 | CoolBarbie54# | UserID18715 | CoolBarbie54# | - | - |
+| 26 | 新莊田徑 | UserID20314 | Sp1234_20314@ | UserID20363 | Sp1234_20363@ | - | - |
+| 27 | 新莊昌明 | UserID20465 | Sp1234_20465@ | - | - | - | - |
+| 28 | 新莊中隆 | UserID20700 | Sp1234_20700@ | UserID20755 | Sp_20755! | - | - |
+| 29 | 新莊富港 | UserID21049 | Sp1234_21049@ | UserID21108 | Sp1234_21108@ | - | - |
+| 30 | 新莊中和 | UserID21997 | Sp1234_21997@ | - | - | - | - |
+| 31 | 新莊昌華 | UserID21998 | Sp1234_21998@ | - | - | - | - |
+| 32 | 新莊福前 | UserID22176 | Sp1234_22176@ | - | - | - | - |
+| 33 | 新莊博愛 | UserID22137 | Sp1234_22137@ | - | - | - | - |
+
+---
+
 ## 十七、圖片對應表
 
 > LINE Bot 回答相關問題時，會自動附上對應圖片連結。所有圖片已設定公開，任何知道連結的人皆可檢視。
@@ -487,12 +532,17 @@ WH：___
 | FBS｜打包步驟2 | https://drive.google.com/uc?id=1VQ9NOXRm14nlCkGfGgVbV3DlxBo97Jse |
 | FBS｜打包步驟3 | https://drive.google.com/uc?id=1EiD_WO1Nzr4w4YNbn3Dz6WMKn_Me6mnG |
 
-### PDA 帳號登出／無法登入
+### 🔴 SCS HD 打包 & 異常
 
-1. 請優先將app滑掉、重連wifi網路、最後再重開app!
-2. 若還是沒有，可到後場登出平板再登入，即可看到帳號密碼 ✅
-
-若步驟操作後仍無法登入，請聯繫區經理協助處理 🙌
+| 步驟 | 圖片連結 |
+|------|---------|
+| SCS HD｜上架步驟1 | https://drive.google.com/uc?id=1pOfx6nxWEzBMst9PuaKl5P0nmC4iTSK7 |
+| SCS HD｜打包步驟2 | https://drive.google.com/uc?id=1oN6jX4nvNOFM19dtd3BDcIyOlmV3QNUf |
+| SCS HD｜打包步驟3 | https://drive.google.com/uc?id=1kpZZndOZTaKIlUCm5CtyDyit2jYWVUcS |
+| SCS HD｜打包步驟4 | https://drive.google.com/uc?id=1YPY8Pg0hm1-i6314QkRlUSzQqNdkA5Ub |
+| SCS HD｜打包步驟5 | https://drive.google.com/uc?id=1oG3NTeCNDj1jyLpAW0ObwlgSRsNO6gZ6 |
+| SCS異常包裹｜退異常步驟1（夾鏈袋處理） | https://drive.google.com/uc?id=1VvuWwWHhA_laUyag-ZTQ2Yz5XMZ2K4q_ |
+| SCS異常包裹｜退異常步驟2（沒有逾期箱） | https://drive.google.com/uc?id=1C6e2y_vHzmsDVCzcjeu1x7jS7JbgPiFG |
 
 ### 🔁 包裹重新分配
 
@@ -512,3 +562,11 @@ WH：___
 |------|---------|
 | AppSheet｜回報收補空箱步驟1 | https://drive.google.com/uc?id=1Oye6KTvsxquIYmY8JcG-AlLCwuG_c6g- |
 | AppSheet｜回報收補空箱完成畫面 | https://drive.google.com/uc?id=1gqJXWamfN69U0fImv1l0PsZz_gOB4yb_ |
+
+
+### PDA 帳號登出／無法登入
+
+1. 請優先將app滑掉重開
+2. 若還是沒有，可到後場登出平板再登入，即可看到帳號密碼 ✅
+
+若步驟操作後仍無法登入，請聯繫區經理協助處理 🙌
