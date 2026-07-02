@@ -1,135 +1,154 @@
+// ============================================================
+// 智取店小幫手 LINE Bot — index.js v3.0
+// 架構:Express + @line/bot-sdk + @anthropic-ai/sdk
+// 知識庫:knowledge.md(僅原文照抄標準答案,不自行生成)
+// 圖片:image_map.js(關鍵字 → Google Drive 圖片)
+// ============================================================
+
+'use strict';
+
+// ---------- 環境變數檢查 ----------
+const REQUIRED_ENV = ['LINE_CHANNEL_ACCESS_TOKEN', 'LINE_CHANNEL_SECRET', 'ANTHROPIC_API_KEY'];
+const missing = REQUIRED_ENV.filter((k) => !process.env[k]);
+if (missing.length > 0) {
+  console.error(`缺少環境變數:${missing.join(', ')},程式結束。`);
+  process.exit(1);
+}
+
 const express = require('express');
 const line = require('@line/bot-sdk');
 const Anthropic = require('@anthropic-ai/sdk');
 const fs = require('fs');
 const path = require('path');
+const { matchImages } = require('./image_map');
 
-const app = express();
-
-// 啟動前檢查環境變數，缺少就印出明確訊息
-const REQUIRED_ENV = ['LINE_CHANNEL_ACCESS_TOKEN', 'LINE_CHANNEL_SECRET', 'ANTHROPIC_API_KEY'];
-const missingEnv = REQUIRED_ENV.filter((key) => !process.env[key]);
-if (missingEnv.length > 0) {
-  console.error('❌ 缺少環境變數：', missingEnv.join(', '));
-  console.error('請到 Railway → Variables 分頁確認以上變數都已設定且有值。');
-  process.exit(1);
-}
-
+// ---------- LINE / Anthropic 用戶端 ----------
 const lineConfig = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
   channelSecret: process.env.LINE_CHANNEL_SECRET,
 };
 
-const lineClient = new line.Client(lineConfig);
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-const SOP_KNOWLEDGE = fs.readFileSync(path.join(__dirname, 'knowledge.md'), 'utf-8');
-
-const IMAGE_MAP = {
-  '立保.*卡紙|卡紙.*立保': 'https://drive.google.com/uc?id=15X8UefD8Byno1fFoX8Icwc19-b9DQGWK',
-  '收據.*無法列印|列印.*收據': 'https://drive.google.com/uc?id=118Sz7SrZi6OeQhgIrt2g-mNB5-gzAxn2',
-  '上架完成|完成上架': 'https://drive.google.com/uc?id=1-tOrVUGr6Irk_UQ0UFrMd0ouq9huyo3l',
-  '上架秒數|秒數計算': 'https://drive.google.com/uc?id=1KNZqEhVsL1M2VRUTYsOQXrU1x995vjfy',
-  '上架.*注意|物流箱.*走道': 'https://drive.google.com/uc?id=1GuoesZtPOrNrsS0lWEZMPlrs8v6DuRmZ',
-  '面單模糊|只印一半': 'https://drive.google.com/uc?id=1QKsVDkv78naN41k2jjE7JcBkqxj-3u2P',
-  '參數錯誤': 'https://drive.google.com/uc?id=1Lk6gUfIU1bWs5-DrV99uqJxZ_89kCiwG',
-  'Time Out|timeout': 'https://drive.google.com/uc?id=1MT5JZB5mdgXPpccxw6h9IAIjtIDeuO0Y',
-  'MS852P|掃描槍.*重置': 'https://drive.google.com/uc?id=1zQr5giGEp9RAVT-9I8XWI5GSNFCBKFNS',
-  'FBS.*流程|FBS.*處理': 'https://drive.google.com/uc?id=1FffvrcX3UitTcGKgFXtQRIzeSWXFo73Y',
-  'SCS.*異常|FBS.*異常|異常.*裝箱|異常.*TO|異常.*包裹.*離店': 'https://drive.google.com/uc?id=1VvuWwWHhA_laUyag-ZTQ2Yz5XMZ2K4q_',
-  '逆物流箱|RTS.*箱|沒有.*逾期箱|尚無.*逆物流': 'https://drive.google.com/uc?id=1C6e2y_vHzmsDVCzcjeu1x7jS7JbgPiFG',
-  '藍色.*垃圾袋|裝不進.*夾鏈袋|夾鏈袋.*裝不': 'https://drive.google.com/uc?id=1VvuWwWHhA_laUyag-ZTQ2Yz5XMZ2K4q_',
-  '重新分配.*步驟': 'https://drive.google.com/uc?id=1veJ3dqNuY2YKdus27WM5U8qw4WYLhEXj',
-  'HD.*流程|HD.*時間表|SCSHD.*打包|HD.*上架': 'https://drive.google.com/file/d/16zG3_pmASdtIwGMhVMffNtq_zkHFanb3/view?usp=drive_link',
-  'HD.*錯誤|HD.*一般宅配|HD.*清空|HD.*櫃.*異常': 'https://drive.google.com/file/d/18O7IzS44POYki8g5xOl1mHh7hlVg5Pce/view?usp=drive_link',
-  '特選宅配|大材積.*打包|破壞袋|封口黏貼': 'https://drive.google.com/file/d/12yabT9IamAeZTYpq9TzvT0XRylT_OrRf/view?usp=drive_link',
-};
-
-function findImages(text) {
-  const images = [];
-  for (const [pattern, url] of Object.entries(IMAGE_MAP)) {
-    if (new RegExp(pattern, 'i').test(text)) {
-      images.push(url);
-      if (images.length >= 2) break;
-    }
-  }
-  return images;
-}
-
-async function askClaude(userMessage) {
-  const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 800,
-    system: `你是「智取店小幫手」，Kimi區智取店的門市 SOP 助理機器人。
-
-【知識庫】
-${SOP_KNOWLEDGE}
-
-【回答規則】
-1. 只能根據上方知識庫內容回答，不可自行捏造或推測
-2. 使用繁體中文回答
-3. 回答要簡潔直接，步驟用數字條列
-4. 知識庫沒有的問題，一律回答：「這個問題我還沒有資料，請聯繫區經理確認 🙏」
-5. 不要說「還有其他問題嗎」、「希望這個回答對你有幫助」等多餘的話
-6. 不要回答與門市SOP無關的話題（例如天氣、聊天、笑話等）
-7. 若問題模糊，根據最接近的知識庫內容回答，並說明是哪個章節的資訊
-8. 回答長度適中，不要過長，重點清楚即可
-
-【你的角色】
-- 你只負責回答蝦皮智取店的作業流程問題
-- 包含：上架、裝箱、離店、設備排除、SCS/FBS異常、HD宅配等門市SOP
-- 遇到與門市無關的問題，請婉拒並說明你只能回答門市SOP相關問題`,
-    messages: [{ role: 'user', content: userMessage }],
-  });
-  return response.content[0].text;
-}
-
-async function handleEvent(event) {
-  if (event.type !== 'message' || event.message.type !== 'text') return null;
-
-  const sourceType = event.source.type;
-  const rawText = event.message.text || '';
-
-  console.log('[事件]', sourceType, rawText.substring(0, 50));
-
-  if (sourceType === 'group' || sourceType === 'room') {
-    const mentionees = event.message.mention?.mentionees || [];
-    const botMentioned = mentionees.some(m => m.isSelf === true);
-    if (!botMentioned) {
-      console.log('[略過] 群組訊息未標記機器人');
-      return null;
-    }
-  }
-
-  const userMessage = rawText.replace(/@\S*/g, '').trim();
-  if (!userMessage) return null;
-
-  console.log('[收到]', userMessage);
-
-  try {
-    const answer = await askClaude(userMessage);
-    const images = findImages(userMessage + ' ' + answer);
-    const messages = [{ type: 'text', text: answer }];
-    for (const url of images) {
-      messages.push({ type: 'image', originalContentUrl: url, previewImageUrl: url });
-    }
-    return lineClient.replyMessage(event.replyToken, messages);
-  } catch (err) {
-    console.error('[錯誤]', err.message);
-    return lineClient.replyMessage(event.replyToken, {
-      type: 'text', text: '系統暫時無法回應，請稍後再試 🙏'
-    });
-  }
-}
-
-app.post('/webhook', express.json(), async (req, res) => {
-  console.log('[Webhook 收到]', JSON.stringify(req.body).substring(0, 200));
-  res.status(200).json({ status: 'ok' });
-  const events = req.body?.events || [];
-  await Promise.all(events.map(handleEvent));
+// @line/bot-sdk v9+ 寫法;若你的 package.json 是 v7/v8,
+// 改用:const client = new line.Client(lineConfig);
+// 並把下方 client.replyMessage({replyToken, messages}) 改成 client.replyMessage(replyToken, messages)
+const client = new line.messagingApi.MessagingApiClient({
+  channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
 });
 
-app.get('/', (req, res) => res.send('LINE Bot 運行中 ✅'));
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+// ---------- 載入知識庫 ----------
+const KNOWLEDGE = fs.readFileSync(path.join(__dirname, 'knowledge.md'), 'utf8');
+
+// ---------- System Prompt(嚴格照抄模式) ----------
+const SYSTEM_PROMPT = `你是「智取店小幫手」,智取店門市教育訓練問答機器人。
+
+【最高原則】
+1. 你只能從知識庫中「原文照抄」對應的【標準答案】回覆,禁止改寫、濃縮、擴充、推測或補充任何知識庫沒有的內容。
+2. 回答方式:比對使用者問題與各條目的【關鍵字】,找到最符合的一條,直接輸出該條【標準答案】全文,一字不改。
+3. 若一個問題同時符合多個條目,最多輸出兩條最相關的【標準答案】,並以標題分隔。
+4. 若知識庫中沒有符合的條目,只能回覆:「這個問題不在教育訓練手冊範圍內,請聯繫主管確認,謝謝。」不得嘗試用自己的知識回答。
+
+【禁止事項】
+- 禁止回答與門市作業無關的話題(閒聊、時事、翻譯、寫作等),一律回覆上述「請聯繫主管」句型。
+- 禁止加入客套話、開場白、結尾語(例如「好的」「希望有幫助」)。
+- 禁止自行發明步驟、數字、按鍵名稱或設備型號。
+- 禁止根據常識推論。知識庫寫什麼,就答什麼。
+
+【格式】
+- 一律使用繁體中文。
+- 保留【標準答案】原有的編號與換行,不重新排版。
+
+===== 知識庫開始 =====
+${KNOWLEDGE}
+===== 知識庫結束 =====`;
+
+const BOT_NAME = '智取店小幫手';
+const FALLBACK_TEXT = '這個問題不在教育訓練手冊範圍內,請聯繫主管確認,謝謝。';
+
+// ---------- 呼叫 Claude ----------
+async function askClaude(userText) {
+  const resp = await anthropic.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 1024,
+    temperature: 0, // 固定輸出,降低自由發揮
+    system: SYSTEM_PROMPT,
+    messages: [{ role: 'user', content: userText }],
+  });
+  const text = resp.content
+    .filter((b) => b.type === 'text')
+    .map((b) => b.text)
+    .join('\n')
+    .trim();
+  return text || FALLBACK_TEXT;
+}
+
+// ---------- 判斷群組訊息是否有 @ 機器人 ----------
+function isMentioned(event) {
+  const msg = event.message;
+  // 官方 mention 欄位(手機端點選 @ 產生)
+  if (msg.mention && Array.isArray(msg.mention.mentionees)) {
+    if (msg.mention.mentionees.some((m) => m.isSelf === true)) return true;
+  }
+  // 備援:文字包含 @機器人名稱(電腦版或手動輸入)
+  return typeof msg.text === 'string' && msg.text.includes(`@${BOT_NAME}`);
+}
+
+// 移除 @提及 字串,留下純問題
+function stripMention(text) {
+  return text.replace(new RegExp(`@${BOT_NAME}`, 'g'), '').trim();
+}
+
+// ---------- 處理事件 ----------
+async function handleEvent(event) {
+  if (event.type !== 'message' || event.message.type !== 'text') return;
+
+  const isGroup = event.source.type === 'group' || event.source.type === 'room';
+  if (isGroup && !isMentioned(event)) return; // 群組沒 @ 就不回
+
+  const userText = isGroup ? stripMention(event.message.text) : event.message.text.trim();
+  if (!userText) return;
+
+  let answerText;
+  try {
+    answerText = await askClaude(userText);
+  } catch (err) {
+    console.error('Claude API 錯誤:', err);
+    answerText = '系統忙碌中,請稍後再試,或聯繫主管。';
+  }
+
+  // 比對圖片(最多 4 張,文字 1 則 + 圖 4 張 = LINE 上限 5 則)
+  const { messages: imageMsgs, videoLink } = matchImages(userText);
+  const textMsg = {
+    type: 'text',
+    text: videoLink ? `${answerText}\n\n教學影片:${videoLink}` : answerText,
+  };
+
+  try {
+    await client.replyMessage({
+      replyToken: event.replyToken,
+      messages: [textMsg, ...imageMsgs],
+    });
+  } catch (err) {
+    console.error('LINE 回覆錯誤:', err?.originalError?.response?.data || err);
+  }
+}
+
+// ---------- Express ----------
+const app = express();
+
+app.get('/', (_req, res) => res.status(200).send('智取店小幫手 OK'));
+
+app.post('/webhook', line.middleware(lineConfig), (req, res) => {
+  Promise.all((req.body.events || []).map(handleEvent))
+    .then(() => res.status(200).end())
+    .catch((err) => {
+      console.error('Webhook 處理錯誤:', err);
+      res.status(200).end(); // 回 200 避免 LINE 重送風暴
+    });
+});
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`啟動連接埠${PORT}`));
+app.listen(PORT, () => {
+  console.log(`智取店小幫手已啟動,port ${PORT},知識庫長度 ${KNOWLEDGE.length} 字`);
+});
