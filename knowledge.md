@@ -1,3 +1,385 @@
+請幫我更新 GitHub 儲存庫 tinaho8891/my-line-bot(main 分支),這是部署在 Railway 的 LINE Bot。
+
+任務:用下方提供的內容更新三個檔案,index.js 和 knowledge.md 覆蓋原有檔案,image_map.js 是新增檔案。不要動 package.json 和其他任何檔案。Commit 訊息:「更新知識庫 v3.0:嚴格照抄模式 + 圖片對應表」。直接 commit 到 main,不要開分支或 PR。
+
+上傳前請先打開 repo 現有的 package.json 確認 @line/bot-sdk 版本:若是 ^9 以上,index.js 原樣上傳;若是 ^7 或 ^8,請依 index.js 內註解把 client 初始化與 replyMessage 改成舊版寫法後再上傳。
+
+===== 檔案 1:index.js =====
+```javascript
+// ============================================================
+// 智取店小幫手 LINE Bot — index.js v3.0
+// 架構:Express + @line/bot-sdk + @anthropic-ai/sdk
+// 知識庫:knowledge.md(僅原文照抄標準答案,不自行生成)
+// 圖片:image_map.js(關鍵字 → Google Drive 圖片)
+// ============================================================
+
+'use strict';
+
+// ---------- 環境變數檢查 ----------
+const REQUIRED_ENV = ['LINE_CHANNEL_ACCESS_TOKEN', 'LINE_CHANNEL_SECRET', 'ANTHROPIC_API_KEY'];
+const missing = REQUIRED_ENV.filter((k) => !process.env[k]);
+if (missing.length > 0) {
+  console.error(`缺少環境變數:${missing.join(', ')},程式結束。`);
+  process.exit(1);
+}
+
+const express = require('express');
+const line = require('@line/bot-sdk');
+const Anthropic = require('@anthropic-ai/sdk');
+const fs = require('fs');
+const path = require('path');
+const { matchImages } = require('./image_map');
+
+// ---------- LINE / Anthropic 用戶端 ----------
+const lineConfig = {
+  channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
+  channelSecret: process.env.LINE_CHANNEL_SECRET,
+};
+
+// @line/bot-sdk v9+ 寫法;若你的 package.json 是 v7/v8,
+// 改用:const client = new line.Client(lineConfig);
+// 並把下方 client.replyMessage({replyToken, messages}) 改成 client.replyMessage(replyToken, messages)
+const client = new line.messagingApi.MessagingApiClient({
+  channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
+});
+
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+// ---------- 載入知識庫 ----------
+const KNOWLEDGE = fs.readFileSync(path.join(__dirname, 'knowledge.md'), 'utf8');
+
+// ---------- System Prompt(嚴格照抄模式) ----------
+const SYSTEM_PROMPT = `你是「智取店小幫手」,智取店門市教育訓練問答機器人。
+
+【最高原則】
+1. 你只能從知識庫中「原文照抄」對應的【標準答案】回覆,禁止改寫、濃縮、擴充、推測或補充任何知識庫沒有的內容。
+2. 回答方式:比對使用者問題與各條目的【關鍵字】,找到最符合的一條,直接輸出該條【標準答案】全文,一字不改。
+3. 若一個問題同時符合多個條目,最多輸出兩條最相關的【標準答案】,並以標題分隔。
+4. 若知識庫中沒有符合的條目,只能回覆:「這個問題不在教育訓練手冊範圍內,請聯繫主管確認,謝謝。」不得嘗試用自己的知識回答。
+
+【禁止事項】
+- 禁止回答與門市作業無關的話題(閒聊、時事、翻譯、寫作等),一律回覆上述「請聯繫主管」句型。
+- 禁止加入客套話、開場白、結尾語(例如「好的」「希望有幫助」)。
+- 禁止自行發明步驟、數字、按鍵名稱或設備型號。
+- 禁止根據常識推論。知識庫寫什麼,就答什麼。
+
+【格式】
+- 一律使用繁體中文。
+- 保留【標準答案】原有的編號與換行,不重新排版。
+
+===== 知識庫開始 =====
+${KNOWLEDGE}
+===== 知識庫結束 =====`;
+
+const BOT_NAME = '智取店小幫手';
+const FALLBACK_TEXT = '這個問題不在教育訓練手冊範圍內,請聯繫主管確認,謝謝。';
+
+// ---------- 呼叫 Claude ----------
+async function askClaude(userText) {
+  const resp = await anthropic.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 1024,
+    temperature: 0, // 固定輸出,降低自由發揮
+    system: SYSTEM_PROMPT,
+    messages: [{ role: 'user', content: userText }],
+  });
+  const text = resp.content
+    .filter((b) => b.type === 'text')
+    .map((b) => b.text)
+    .join('\n')
+    .trim();
+  return text || FALLBACK_TEXT;
+}
+
+// ---------- 判斷群組訊息是否有 @ 機器人 ----------
+function isMentioned(event) {
+  const msg = event.message;
+  // 官方 mention 欄位(手機端點選 @ 產生)
+  if (msg.mention && Array.isArray(msg.mention.mentionees)) {
+    if (msg.mention.mentionees.some((m) => m.isSelf === true)) return true;
+  }
+  // 備援:文字包含 @機器人名稱(電腦版或手動輸入)
+  return typeof msg.text === 'string' && msg.text.includes(`@${BOT_NAME}`);
+}
+
+// 移除 @提及 字串,留下純問題
+function stripMention(text) {
+  return text.replace(new RegExp(`@${BOT_NAME}`, 'g'), '').trim();
+}
+
+// ---------- 處理事件 ----------
+async function handleEvent(event) {
+  if (event.type !== 'message' || event.message.type !== 'text') return;
+
+  const isGroup = event.source.type === 'group' || event.source.type === 'room';
+  if (isGroup && !isMentioned(event)) return; // 群組沒 @ 就不回
+
+  const userText = isGroup ? stripMention(event.message.text) : event.message.text.trim();
+  if (!userText) return;
+
+  let answerText;
+  try {
+    answerText = await askClaude(userText);
+  } catch (err) {
+    console.error('Claude API 錯誤:', err);
+    answerText = '系統忙碌中,請稍後再試,或聯繫主管。';
+  }
+
+  // 比對圖片(最多 4 張,文字 1 則 + 圖 4 張 = LINE 上限 5 則)
+  const { messages: imageMsgs, videoLink } = matchImages(userText);
+  const textMsg = {
+    type: 'text',
+    text: videoLink ? `${answerText}\n\n教學影片:${videoLink}` : answerText,
+  };
+
+  try {
+    await client.replyMessage({
+      replyToken: event.replyToken,
+      messages: [textMsg, ...imageMsgs],
+    });
+  } catch (err) {
+    console.error('LINE 回覆錯誤:', err?.originalError?.response?.data || err);
+  }
+}
+
+// ---------- Express ----------
+const app = express();
+
+app.get('/', (_req, res) => res.status(200).send('智取店小幫手 OK'));
+
+app.post('/webhook', line.middleware(lineConfig), (req, res) => {
+  Promise.all((req.body.events || []).map(handleEvent))
+    .then(() => res.status(200).end())
+    .catch((err) => {
+      console.error('Webhook 處理錯誤:', err);
+      res.status(200).end(); // 回 200 避免 LINE 重送風暴
+    });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`智取店小幫手已啟動,port ${PORT},知識庫長度 ${KNOWLEDGE.length} 字`);
+});
+```
+
+===== 檔案 2:image_map.js =====
+```javascript
+// ============================================================
+// IMAGE_MAP v3.0 — 智取店小幫手 圖片對應表
+// 圖片來源:Google Drive「AI工具機器人」資料夾(權限:知道連結的任何人)
+// LINE 圖片訊息必須用直連網址,格式:https://lh3.googleusercontent.com/d/<FILE_ID>
+// 注意:LINE 一次 reply 最多 5 則訊息(1 則文字 + 最多 4 張圖),程式已自動裁切
+// ============================================================
+
+const IMG = (id) => `https://lh3.googleusercontent.com/d/${id}`;
+
+const IMAGE_MAP = [
+  // ---------- 繳費機 ----------
+  {
+    keywords: /立保.*(卡紙)|卡紙.*(立保)/,
+    images: [IMG('15X8UefD8Byno1fFoX8Icwc19-b9DQGWK')], // 立保繳費機卡紙
+  },
+  {
+    keywords: /立保.*(打不開|門.*(開|鎖)|開不了)/,
+    images: [IMG('1EpHHpm2we2VVbv1E-stYZJku-v5gCni3')], // 立保繳費機打不開
+  },
+  {
+    keywords: /繳費機.*(無法(列印|印)|不出紙|印不出|收據.*(印不出|不出))/,
+    images: [IMG('118Sz7SrZi6OeQhgIrt2g-mNB5-gzAxn2')], // 繳費機收據無法列印_電源線重插
+  },
+
+  // ---------- 標籤機 / 收據機(USB 有線) ----------
+  {
+    keywords: /(標籤機|收據機).*(無法(列印|印)|印不出|不能印|簡易排除)/,
+    images: [
+      IMG('1T7O4iOYcG42xzecfrMpwx15fdllnL_iy'), // 標籤機簡易排除1
+      IMG('1TrQ8TstavX-JBkDCKWkIOM3HeBudoAag'), // 標籤機簡易排除2
+      IMG('1BMexbvlgJtflJUj6WfDNmyjEuV35AmVF'), // 標籤機簡易排除3
+      IMG('1j3tmiGHhTJ_40n_8XPkRvMvnOlYVz3_f'), // 標籤機簡易排除4
+    ],
+  },
+  {
+    keywords: /(面單|標籤).*(模糊|印.*一半|印不完整)/,
+    images: [IMG('1QKsVDkv78naN41k2jjE7JcBkqxj-3u2P')], // 標籤機模糊 印一半
+  },
+  {
+    keywords: /(認識|型號|哪台|長怎樣).*(印表機|標籤機|收據機)|(印表機|標籤機|收據機).*(型號|認識)/,
+    images: [
+      IMG('1VZBHkDhtJMEZKRcHzS0xrecL6Bau0P8V'), // 熱感印機圖片
+      IMG('1yjFLUk_tjjfEScV4xllTB3TWMYtsGbeC'), // 標籤機圖片
+    ],
+  },
+
+  // ---------- 藍芽標籤機 ----------
+  {
+    keywords: /藍[芽牙]標籤機.*(無法(列印|印)|TO單|排除|連線)/i,
+    images: [
+      IMG('1rJpPLwt88yxutlOdi9fsHkYE1QcjJaMT'), // 藍芽標籤機無法列印先重開機
+      IMG('1eTemRWa1Kv77HNmFqFnQ1wqyTm5b82Zh'), // 故障排除1
+      IMG('1W7ykVTSPvtK7Bi_s1PUSQgfy0YxbcTVc'), // 故障排除2
+      IMG('1VZT_tTow-LFl2_O9rFtt1I8eKKLUNyxR'), // 故障排除3
+      // 第5張(故障排除4)超過 LINE 單次上限,保留備用:
+      // IMG('1Lk6gUfIU1bWs5-DrV99uqJxZ_89kCiwG'),
+    ],
+  },
+  {
+    keywords: /time\s*out|逾時/i,
+    images: [IMG('1MT5JZB5mdgXPpccxw6h9IAIjtIDeuO0Y')], // 藍芽標籤機出現time out
+  },
+  {
+    keywords: /參數錯誤/,
+    images: [IMG('1eTemRWa1Kv77HNmFqFnQ1wqyTm5b82Zh')], // 重新設定畫面(故障排除1)
+  },
+
+  // ---------- 掃描槍 / 平板 / 主機 ----------
+  {
+    keywords: /MS852P|掃描槍|掃碼槍/i,
+    images: [
+      IMG('1zQr5giGEp9RAVT-9I8XWI5GSNFCBKFNS'), // MS852P
+      IMG('1NDM4d9eD_KhSbshHb7d5qpUniFmooRCj'), // MS852P2
+    ],
+  },
+  {
+    keywords: /(Kiosk|寄件平板).*(開機|重啟|重開|按鍵)/i,
+    images: [IMG('1dHSjOE8Ditd9yXHXs48TrjAwl-qgC5sA')], // 平板_Kiosk開機鍵1
+  },
+  {
+    keywords: /(NDD|橘櫃).*(平板).*(開機|重啟|重開)|橘櫃平板/i,
+    images: [IMG('132pLwiPuXhxo4z0IcrpIenzgpktio-58')], // 橘櫃平板開機鍵
+  },
+  {
+    keywords: /mini\s*pc|寄件櫃.*(主機|電腦)/i,
+    images: [IMG('1lGz7SgsOv4pjxtWNaJjdNyqDoiWTnESZ')], // mini pc開關鍵
+  },
+
+  // ---------- 上架 ----------
+  {
+    keywords: /上架.*(SOP|流程|怎麼|如何)|智能上架/,
+    images: [IMG('1GuoesZtPOrNrsS0lWEZMPlrs8v6DuRmZ')], // 上架SOP
+  },
+  {
+    keywords: /上架.*(秒數|效率)/,
+    images: [IMG('1KNZqEhVsL1M2VRUTYsOQXrU1x995vjfy')], // 上架效率
+  },
+  {
+    keywords: /上架完成.*(回報|拍照)/,
+    images: [IMG('1-tOrVUGr6Irk_UQ0UFrMd0ouq9huyo3l')], // 上架完成回報
+  },
+  {
+    keywords: /裸箱|上架排序\s*0|排序0/,
+    images: [IMG('1KQKUwquvy7GhJSCXAz3laTzSQILle5PJ')], // 裸箱上架順序0
+  },
+
+  // ---------- 異常包裹 / SCS FBS ----------
+  {
+    keywords: /異常包裹.*(回報)|回報.*(異常包裹)/,
+    images: [IMG('1OZ42fmIYABx7n_diPvocQ8qAbVWW2fkL')], // 異常包裹回報
+  },
+  {
+    keywords: /查貨態|spx\.tw|重複件|取消件|遺失件/i,
+    images: [IMG('1JTJubDgCiPdNetAVHSReFEkNAPP8ENtk')], // 異常包裹查貨態
+  },
+  {
+    keywords: /SCS.*(異常|RTS)|FBS.*(異常)|RTS/i,
+    images: [
+      IMG('1VQGXVTCABByshNng5xFDcMxCxsZnTsfu'), // SCS異常1
+      IMG('1UKq--UDarww2G6YdOkzbjHf-4l653d-p'), // SCS異常2
+      IMG('1kKZCBGOQ4_oQI7QErWE_-qJRIh1PTSc5'), // SCS異常3
+      IMG('1AzUw1KilHl7w6zTTTyrAHCgwWjxUsU3i'), // SCS異常4
+      // 第5張超過 LINE 單次上限,保留備用:
+      // IMG('1iYgj3Qs2xA8d_Fzzbqi-ZTY38nHaW5Kf'), // SCS異常5
+    ],
+  },
+
+  // ---------- FBS 打包 ----------
+  {
+    keywords: /FBS.*(打包|流程|處理|回報)/i,
+    images: [
+      IMG('1FffvrcX3UitTcGKgFXtQRIzeSWXFo73Y'), // fbs
+      IMG('1SZxScUgTDYT72IWoY8rSY47eyu_CivD-'), // FBS打包
+      IMG('1VQ9NOXRm14nlCkGfGgVbV3DlxBo97Jse'), // FBS打包2
+      IMG('1EiD_WO1Nzr4w4YNbn3Dz6WMKn_Me6mnG'), // FBS打包3
+    ],
+  },
+
+  // ---------- HD 宅配 / SCS HD ----------
+  {
+    keywords: /HD.*(流程|時間|時段|打包|上架順序)|SCSHD/i,
+    images: [
+      IMG('16zG3_pmASdtIwGMhVMffNtq_zkHFanb3'), // HD門市流程時間表
+      IMG('1pOfx6nxWEzBMst9PuaKl5P0nmC4iTSK7'), // SCS HD 上架1
+      IMG('1oN6jX4nvNOFM19dtd3BDcIyOlmV3QNUf'), // SCS HD 打包2
+      IMG('1kpZZndOZTaKIlUCm5CtyDyit2jYWVUcS'), // SCS HD 打包3
+      // 備用:打包4 1YPY8Pg0hm1-i6314QkRlUSzQqNdkA5Ub、打包5 1oG3NTeCNDj1jyLpAW0ObwlgSRsNO6gZ6
+    ],
+  },
+  {
+    keywords: /HD.*(常見錯誤|注意)|一般宅配.*(錯誤|注意)/i,
+    images: [IMG('12yabT9IamAeZTYpq9TzvT0XRylT_OrRf')], // HD一般宅配常見錯誤
+  },
+  {
+    keywords: /特選宅配/,
+    images: [IMG('18O7IzS44POYki8g5xOl1mHh7hlVg5Pce')], // 特選宅配常見錯誤
+  },
+  {
+    keywords: /(宅配|HD).*(待上架|回報)/i,
+    images: [IMG('1XLc1JRRFS3yRmzMMH2ib3pGQ9iLg2gxy')], // 宅配回報待上架回報
+  },
+
+  // ---------- 回報 ----------
+  {
+    keywords: /晚班.*(回報|管制品)|管制品/,
+    images: [IMG('1mYFSww_dh7t6iqSSuecas4occO1rZ4Gi')], // 晚班回報管制品
+  },
+  {
+    keywords: /AppSheet|收補空箱|空箱.*(回報)/i,
+    images: [
+      IMG('1Oye6KTvsxquIYmY8JcG-AlLCwuG_c6g-'), // APPSHEET回報收補空箱
+      IMG('1gqJXWamfN69U0fImv1l0PsZz_gOB4yb_'), // APPSHEET回報收補空箱2
+    ],
+  },
+
+  // ---------- 其他 ----------
+  {
+    keywords: /TMT|門.*(關不|打不開|鎖)/i,
+    images: [IMG('1bQlIjHKDMNu9XSMOZ88YuI4VTVqqQu4j')], // TMT關門流程
+  },
+  {
+    keywords: /包裹重新分配|重新分配/,
+    images: [
+      IMG('1veJ3dqNuY2YKdus27WM5U8qw4WYLhEXj'), // 包裹重新分配1
+      IMG('1BwbCA_rnkvL5KVlO6i8qbPnsWyTvOL0i'), // 包裹重新分配2
+      IMG('1Rp4LsK1ozutHzAve69Xo3uCZKSDne2q_'), // 包裹重新分配3
+      IMG('11R9kMWkgPN2qjPokXkLRVkTMfB4T3joD'), // 包裹重新分配4
+      // 備用:分配5 1_Wh5c8Qxt7cSK84RTeTtaoOX9HCOcJl_、分配6 1iBWz_kqsZepRKCRmPd70_mkINM8M74hd
+    ],
+    // 教學影片(LINE 無法直接播 Drive 影片,以連結附在文字後):
+    videoLink: 'https://drive.google.com/file/d/1ALtufuScqKBveuWg6HwJP7AyQjp40vas/view',
+  },
+];
+
+// ------------------------------------------------------------
+// 依使用者問題比對圖片,回傳 LINE image message 陣列(最多 maxImages 張)
+// ------------------------------------------------------------
+function matchImages(userText, maxImages = 4) {
+  for (const entry of IMAGE_MAP) {
+    if (entry.keywords.test(userText)) {
+      const msgs = entry.images.slice(0, maxImages).map((url) => ({
+        type: 'image',
+        originalContentUrl: url,
+        previewImageUrl: url,
+      }));
+      return { messages: msgs, videoLink: entry.videoLink || null };
+    }
+  }
+  return { messages: [], videoLink: null };
+}
+
+module.exports = { IMAGE_MAP, matchImages };
+```
+
+===== 檔案 3:knowledge.md =====
+```markdown
 # 智取店小幫手 知識庫 v3.0(依 Kimi區_教育訓練手冊3.0 整理)
 # 使用規則:機器人只能「原文照抄」以下標準答案,不得自行改寫、補充或推測。
 # 每個條目格式:【關鍵字】= 觸發詞 / 【標準答案】= 直接輸出的內容。
@@ -554,3 +936,6 @@ SCS、FBS 異常件處理(6/2 起,無需等待 RTS,可直接送回 WH;重點:有
 【關鍵字】(知識庫中找不到答案時)
 【標準答案】
 這個問題不在教育訓練手冊範圍內,請聯繫主管確認,謝謝。
+```
+
+完成後請回報 commit 連結,並確認 repo 檔案清單中三個檔案都已更新、knowledge.md 第一行是「# 智取店小幫手 知識庫 v3.0」。
