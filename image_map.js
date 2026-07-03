@@ -127,6 +127,16 @@ const IMAGE_MAP = [
 
   // ---------- FBS 打包 ----------
   {
+    keywords: /FBS.*(離店|裝箱|逐顆)|環保無包裝.*(逐顆|裝箱)/i,
+    images: [
+      IMG('1dJ3vmHoG-d87eo-LEP3rIWzsPo6IxM2x'), // FBS逐顆裝箱1 辨別與離店方式
+      IMG('1rNhyxYpMMnSpWDIDz0nPO-lmtjACHH6w'), // FBS逐顆裝箱3 逐顆刷南北分開
+      IMG('1XRhtiw5FusYHimtqVPP-bpyXFHStLOUj'), // FBS逐顆裝箱4 TO單貼法
+      IMG('1RJYuLra73UjG3_OCYpL2JtBdzHsrNwoL'), // FBS逐顆裝箱5 疊放南北標示
+      // 備用:逐顆裝箱2 系統入口 1ATABhUf4vVYrPnwbdyMcq0RIIlynTIk-
+    ],
+  },
+  {
     keywords: /FBS.*(打包|流程|處理|回報)/i,
     images: [
       IMG('1FffvrcX3UitTcGKgFXtQRIzeSWXFo73Y'), // fbs
@@ -210,17 +220,3 @@ function matchImages(userText, maxImages = 4) {
 }
 
 module.exports = { IMAGE_MAP, matchImages };
-
-// ------------------------------------------------------------
-// index.js 使用範例:
-//
-// const { matchImages } = require('./image_map');
-// ...
-// const answerText = await askClaude(userText);           // 知識庫文字答案
-// const { messages: imageMsgs, videoLink } = matchImages(userText);
-// const replyMessages = [
-//   { type: 'text', text: videoLink ? `${answerText}\n\n教學影片:${videoLink}` : answerText },
-//   ...imageMsgs,                                          // 文字1則+圖最多4張=5則,不超過 LINE 上限
-// ];
-// await client.replyMessage(event.replyToken, replyMessages);
-// ------------------------------------------------------------
