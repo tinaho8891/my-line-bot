@@ -69,7 +69,7 @@ const FALLBACK_TEXT = '這個問題不在教育訓練手冊範圍內,請聯繫�
 // ---------- 呼叫 Claude ----------
 async function askClaude(userText) {
   const resp = await anthropic.messages.create({
-    model: 'claude-sonnet-4-6',
+    model: 'claude-haiku-4-5-20251001',
     max_tokens: 1024,
     temperature: 0, // 固定輸出,降低自由發揮
     system: SYSTEM_PROMPT,
