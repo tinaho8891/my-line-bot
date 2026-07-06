@@ -1,3 +1,13 @@
+
+ // ---------- AMS 資產管理 / 報修(需排在掃描槍、標籤機條目之前)----------
+  {
+    keywords: /AMS|報修|資產申請|維修申請|耗材.*(申請|叫貨)/i,
+    images: [
+      IMG('1s8XJ_tv47yG0jgjC3Yf370RT-6osGxUa'), // AMS 維修申請流程
+      IMG('1VLpCnJNu14bN0a3KUnze5OWZ7K93E4vw'), // AMS 資產管理
+      IMG('1ihXbrr7E4TpG2vNA3cg1lWx1Abjmx8Qo'), // AMS 資產管理2
+    ],
+  },
 // ============================================================
 // IMAGE_MAP v3.0 — 智取店小幫手 圖片對應表
 // 圖片來源:Google Drive「AI工具機器人」資料夾(權限:知道連結的任何人)
