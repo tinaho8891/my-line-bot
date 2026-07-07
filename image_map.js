@@ -2,7 +2,7 @@
 // IMAGE_MAP v3.1 — 智取店小幫手 圖片對應表
 // ============================================================
 
-const IMG = (id) => `https://lh3.googleusercontent.com/d/$${id}`; // 修正了 ${id}
+const IMG = (id) => `https://lh3.googleusercontent.com/d/${id}`; // 修正了 ${id}
 
 const IMAGE_MAP = [
   // ---------- 藍芽標籤機 (精準項目，優先排在有線標籤機之前) ----------
