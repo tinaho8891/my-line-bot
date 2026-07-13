@@ -64,12 +64,29 @@ ${KNOWLEDGE}
 ===== 知識庫結束 =====`;
 
 const BOT_NAME = '智取店小幫手';
+
+// ---------- 自我介紹(加好友/入群自動發送;答不出來時附上) ----------
+const INTRO_TEXT = `我是智取店小幫手🤖
+依教育訓練手冊回答門市作業問題,直接輸入關鍵字即可,例如「立保卡紙」「FBS離店裝箱」「掃碼槍報修」。
+
+我能解答的主題:
+🔸繳費機:檢查收據紙、換紙、卡紙(立保/博辰/瑞興)
+🔸上架:智能上架、手動上架、上架秒數、無材積、裸箱
+🔸包裹:每日盤點、逾期包裹、遺落包裹、包裹重新分配
+🔸異常:錯店、濕破損、SCS/FBS異常件、異常離店裝箱
+🔸寄件:打包離店、FBS打包、HD宅配、特選宅配
+🔸回報:到店回報、晚班回報、離店回報格式、AppSheet收補空箱
+🔸設備排除:標籤機、收據機、掃描槍、Kiosk、NDD平板、藍芽標籤機、Mini PC
+🔸AMS:資產申請、耗材申請、維修報修
+
+手冊沒有的問題,請聯繫主管確認。`;
+
 const FALLBACK_TEXT = '這個問題不在教育訓練手冊範圍內,請聯繫主管確認,謝謝。';
 
 // ---------- 呼叫 Claude ----------
 async function askClaude(userText) {
   const resp = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
+    model: 'claude-sonnet-4-6',
     max_tokens: 1024,
     temperature: 0, // 固定輸出,降低自由發揮
     system: SYSTEM_PROMPT,
@@ -101,6 +118,19 @@ function stripMention(text) {
 
 // ---------- 處理事件 ----------
 async function handleEvent(event) {
+  // 加好友(follow)或被邀入群組(join)時,自動發送自我介紹
+  if (event.type === 'follow' || event.type === 'join') {
+    try {
+      await client.replyMessage({
+        replyToken: event.replyToken,
+        messages: [{ type: 'text', text: INTRO_TEXT }],
+      });
+    } catch (err) {
+      console.error('自我介紹發送錯誤:', err?.originalError?.response?.data || err);
+    }
+    return;
+  }
+
   if (event.type !== 'message' || event.message.type !== 'text') return;
 
   const isGroup = event.source.type === 'group' || event.source.type === 'room';
@@ -109,12 +139,32 @@ async function handleEvent(event) {
   const userText = isGroup ? stripMention(event.message.text) : event.message.text.trim();
   if (!userText) return;
 
+  // 主動查詢使用說明(不經過 Claude,直接回覆,順便省 API 費用)
+  if (/使用說明|自我介紹|你會什麼|會回答什麼|怎麼用/.test(userText)) {
+    try {
+      await client.replyMessage({
+        replyToken: event.replyToken,
+        messages: [{ type: 'text', text: INTRO_TEXT }],
+      });
+    } catch (err) {
+      console.error('LINE 回覆錯誤:', err?.originalError?.response?.data || err);
+    }
+    return;
+  }
+
   let answerText;
   try {
     answerText = await askClaude(userText);
   } catch (err) {
     console.error('Claude API 錯誤:', err);
     answerText = '系統忙碌中,請稍後再試,或聯繫主管。';
+  }
+
+  // 答不出來(請聯繫主管)時,附上自我介紹讓夥伴知道能問什麼
+  if (answerText.includes('不在教育訓練手冊範圍')) {
+    answerText = `${answerText}
+
+${INTRO_TEXT}`;
   }
 
   // 比對圖片(最多 4 張,文字 1 則 + 圖 4 張 = LINE 上限 5 則)
